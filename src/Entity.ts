@@ -5,25 +5,25 @@ export class Entity {
     public position : Vector;
     public contex : any;
     public velocity: Vector;
-    public acc:Vector = new Vector(0,0);
+    public acc:Vector = new Vector();
     public speed:number;
     public force:number;
 
     constructor(position_:Vector, contex_:any){
         this.position = position_;
         this.contex = contex_;
-        this.velocity = new Vector(0,0);
-        this.speed = 1;
-        this.force = 0.1;
+        this.velocity = new Vector(1,1);
+        this.speed = 4;
+        this.force = 0.2;
     }
 
     public seek(target:Vector) {
+        let desire = Vector.subtract(target, this.position);
         
-        let desire = new Vector(target.x - this.position.x, target.y - this.position.y);
-        console.log(target);
         desire.setMagnitude(this.speed);
-
-        let steer = new Vector(desire.x - this.velocity.x, desire.y - this.velocity.y);
+        
+        let steer = Vector.subtract(desire, this.velocity);
+ 
         steer.limit(this.force);
 
         this.acc.add(steer);
@@ -36,6 +36,7 @@ export class Entity {
         let dist = 1000000000;
         let closest:Target;
         let k:number = 0;
+        
         targets.forEach((el , key)=> {
             let temp = new Vector(el.pos.x - this.position.x, el.pos.y - this.position.y).magnitude();
             if(dist > temp){
@@ -44,8 +45,9 @@ export class Entity {
                 k = key;
             };
         })
-        console.log(closest!);
+        
         this.seek(closest!.pos);
+
         if (this.position.x > closest!.pos.x-7 && this.position.x < closest!.pos.x+7 
             && this.position.y > closest!.pos.y - 7 && this.position.y < closest!.pos.y + 7) {
                 targets.splice(k, 1);
@@ -54,9 +56,11 @@ export class Entity {
 
     public update(){
         this.velocity.add(this.acc);
+        this.velocity.limit(this.speed);
+
+
         this.position.add(this.velocity);
         this.acc.multiply(0);
-        this.velocity.limit(0.9);
     }
 
     public draw() {

@@ -11,7 +11,7 @@ export class Environment extends Canvas{
 
     constructor(container:string, width:number, height:number) {
         super(container, width, height);
-        this.setFrames(15);
+        this.setFrames(60);
         /** From here on is the canvas setup */
 
        this.generateFood(30)
